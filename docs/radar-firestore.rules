@@ -1,0 +1,35 @@
+// Regras do Radar de Novos Postos – MT.
+// Cole estes blocos DENTRO do "match /databases/{database}/documents { ... }" das regras atuais do Firestore
+// (console do Firebase > Firestore Database > Regras) e clique em Publicar. Não apague as regras que já existem.
+// O robô grava com a conta de serviço, que não passa por estas regras; aqui só se define o que o app pode fazer.
+
+    function radarPerfil() { return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data; }
+    function radarAtivo() { return request.auth != null && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)) && radarPerfil().ativo == true; }
+    function radarAdm() { let u = radarPerfil(); return radarAtivo() && (u.papel == 'adm' || (('papeis' in u) && u.papeis.hasAny(['adm']))); }
+    function radarSo(campos) { return request.resource.data.diff(resource.data).affectedKeys().hasOnly(campos); }
+
+    // Leitura para todos os usuários ativos; escrita só nos campos que o app usa
+    match /radar_empreendimentos/{id} {
+      allow read: if radarAtivo();
+      allow update: if (radarAdm() && radarSo(['revisao'])) || (radarAtivo() && radarSo(['leadId']));
+    }
+    match /radar_processos/{id} { allow read: if radarAtivo(); }
+    match /radar_documentos/{id} { allow read: if radarAtivo(); }
+    match /radar_execucoes/{id} { allow read: if radarAtivo(); }
+    match /radar_historico/{id} {
+      allow read: if radarAtivo();
+      allow create: if radarAdm() && request.resource.data.tipo == 'revisao';
+    }
+    match /radar_fontes/{id} {
+      allow read: if radarAtivo();
+      allow update: if radarAdm() && radarSo(['ativa']);
+    }
+    match /radar_alertas/{id} {
+      allow read: if radarAtivo();
+      // cada pessoa só pode se marcar como "lido"
+      allow update: if radarAtivo() && radarSo(['lidoPor']) && request.resource.data.lidoPor.removeAll(resource.data.lidoPor).hasOnly([request.auth.uid]);
+    }
+    match /radar_config/{id} {
+      allow read: if radarAtivo();
+      allow write: if radarAdm();
+    }

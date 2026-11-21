@@ -382,6 +382,37 @@ table.users{min-width:640px}
 .teleembreve{border:1px dashed var(--line);border-radius:10px;padding:18px;background:var(--field);display:grid;gap:6px;justify-items:start}
 .teleembreve b{font-family:var(--display);font-size:15px}.teleembreve small{color:var(--muted);font-size:13px;line-height:1.45}
 .teleembreve .pill{font-size:10.5px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);border-color:transparent}
+/* Radar de Novos Postos – MT (aba Telemetria) */
+.radar{display:grid;gap:12px}
+.rdcab{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.rdcab>div{display:grid;gap:2px}.rdtit{font-family:var(--display);font-size:17px;letter-spacing:-.01em}.rdcab small{color:var(--muted);font-size:12.5px}
+.rdkpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.rdkpi{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface);display:grid;gap:2px;border-top:3px solid var(--accent)}
+.rdkpi b{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums;line-height:1.1}.rdkpi small{color:var(--muted);font-size:12px}
+.rdnav{flex-wrap:wrap}
+.rdfiltros input[type=search]{flex:1 1 220px;width:auto}.rdfiltros select{flex:0 1 190px;width:auto}.rdfiltros label{flex:0 1 150px}
+.rdgeral{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:12px;align-items:start}
+@media (max-width:820px){.rdgeral{grid-template-columns:minmax(0,1fr)}}
+.rdbarras{display:grid;gap:6px}
+.rdbarra{font:inherit;display:grid;grid-template-columns:minmax(0,9em) minmax(0,1fr) auto;align-items:center;gap:8px;border:0;background:none;padding:2px 0;color:var(--fg);text-align:left;cursor:pointer;min-height:0}
+.rdbarra span{font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rdbarra i{display:block;height:10px;border-radius:5px;background:var(--accent)}.rdbarra b{font-size:12.5px;font-variant-numeric:tabular-nums}
+.rdrow>span:last-child{gap:4px}
+.rdconf{font-size:10.5px;white-space:nowrap}
+.rdconf.confirmado{background:var(--sg-posvenda-claro);color:var(--sg-posvenda-escuro);border-color:transparent}
+.rdconf.possivel{background:var(--sg-comercial-claro);color:var(--sg-comercial-escuro);border-color:transparent}
+.rdconf.analise{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--sg-disparo-texto);border-color:transparent}
+.rdconf.nao_confirmado{background:color-mix(in srgb,var(--danger) 12%,transparent);color:var(--danger);border-color:transparent}
+:root[data-theme="dark"] .rdconf.confirmado{background:#163323;color:#7ed3a0}:root[data-theme="dark"] .rdconf.possivel{background:#1b2740;color:#8fb0f0}:root[data-theme="dark"] .rdconf.analise{color:#ff9a6b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .rdconf.confirmado{background:#163323;color:#7ed3a0}:root:not([data-theme="light"]) .rdconf.possivel{background:#1b2740;color:#8fb0f0}:root:not([data-theme="light"]) .rdconf.analise{color:#ff9a6b}}
+.rdpend{font-style:italic;color:var(--muted);font-size:.92em}
+.rdtrecho{white-space:normal;line-height:1.45}
+.rdpre{white-space:pre-line}
+.rderro{color:var(--danger)}
+.rdalerta.lido{opacity:.65}
+.rdmapa{height:min(62vh,560px);border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--field)}
+.rddl{display:grid;grid-template-columns:minmax(0,11em) minmax(0,1fr);gap:6px 12px;margin:0;font-size:13.5px}
+.rddl dt{color:var(--muted)}.rddl dd{margin:0;overflow-wrap:anywhere}
+@media (max-width:560px){.rddl{grid-template-columns:minmax(0,1fr)}.rddl dd{margin-bottom:6px}}
 /* Telemetria ANP */
 .teleabas{display:flex;gap:4px;padding:4px;margin-bottom:12px;background:var(--surface);border:1px solid var(--line);border-radius:999px;width:max-content;max-width:100%;overflow-x:auto}
 .teleabas button{font:600 13.5px/1 var(--body);min-height:40px;padding:0 16px;border:0;border-radius:999px;background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap}
@@ -1022,6 +1053,7 @@ button.danger{color:var(--danger);border-color:var(--danger)}
 <script src="anp.js"></script>
 <script type="module" src="crm.js"></script>
 <script src="telemetria.js"></script>
+<script type="module" src="radar.js"></script>
 <script src="telemetria-anp.js"></script>
 <script>
 const $ = id => document.getElementById(id);

@@ -1,0 +1,59 @@
+name: Radar de novos postos (MT)
+
+# Robô do Radar de Novos Postos – MT (aba Telemetria). Confere a cada 15 minutos; só pesquisa quando passou o
+# tempo configurado no app (padrão: 24 h) ou quando um administrador usa "Pesquisar agora".
+# Grava no Firestore com o segredo FIREBASE_SERVICE_ACCOUNT. Sem ele, ou num push de código, roda em modo de
+# teste: pesquisa e classifica de verdade, não grava nada e deixa o resultado como artefato da execução.
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    inputs:
+      desde:
+        description: 'Pesquisar a partir de (AAAA-MM-DD). Vazio = desde a última pesquisa.'
+        required: false
+      teste:
+        description: 'Modo de teste (não grava no Firestore)'
+        type: boolean
+        default: false
+  push:
+    paths:
+      - 'scripts/radar/**'
+      - '.github/workflows/radar-postos.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: radar-postos
+  cancel-in-progress: false
+
+jobs:
+  radar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            scripts
+            anp
+            lib
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Rodar o Radar
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          RADAR_TESTE: ${{ github.event_name == 'push' || inputs.teste == true }}
+          RADAR_GATILHO: ${{ github.event_name == 'workflow_dispatch' && 'manual' || github.event_name == 'push' && 'push' || 'agendado' }}
+          RADAR_DESDE: ${{ inputs.desde }}
+          RADAR_DIAS: ${{ github.event_name == 'push' && '90' || '' }}
+        run: node scripts/radar/radar.mjs
+      - name: Guardar o resultado do teste
+        if: always() && hashFiles('radar-saida/execucao.json') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: radar-saida
+          path: radar-saida/
+          retention-days: 14
