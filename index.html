@@ -317,7 +317,7 @@ body:not(.fb) .fbonly{display:none!important}
 body.fb .nofb{display:none!important}
 .tabuser{margin-left:auto;align-self:center;font-size:12px;color:var(--ink-fg);opacity:.7;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40vw}
 .linkbtn{background:none!important;border:0!important;color:var(--purple)!important;padding:6px 8px;font-weight:600;cursor:pointer}
-.fotoCard{max-width:380px}.fotoArea{position:relative;width:240px;height:240px;margin:6px auto;border-radius:50%;overflow:hidden;background:#111}
+#fotoBox{overflow-y:auto;align-items:flex-start}#fotoBox .fotoCard{margin:auto 0}.fotoCard{max-width:420px}.cadBloco{display:flex;flex-direction:column;gap:6px}.cadRot{font-size:12px;font-weight:500;line-height:16px;color:var(--muted)}.cadRot small{font-weight:400;margin-left:4px}.cadDica{margin:0}.cadUfs{max-width:none}.cadUfs .uuf span{padding:9px 0;font-size:12.5px}.cadFotoBtns{justify-content:center}.cadMsg{margin:0;font-size:13px;min-height:0;color:var(--danger)}.cadMsg:empty{display:none}.cadMsg.ok{color:var(--muted)}.fotoArea{position:relative;width:240px;height:240px;margin:6px auto;border-radius:50%;overflow:hidden;background:#111}
 .fotoArea video,.fotoArea img{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}.fotoArea img{transform:none}
 .fotoOval{position:absolute;inset:18px 38px;border:2px dashed rgba(255,255,255,.7);border-radius:50%}
 .fotoOk{display:flex;flex-direction:row;align-items:flex-start;gap:8px;font-size:13px;font-weight:500;line-height:1.35}.fotoOk input{width:18px;height:18px;flex:none;margin:1px 0 0;appearance:auto;-webkit-appearance:checkbox}
@@ -578,6 +578,9 @@ table.users select{min-width:140px}
 button.danger{color:var(--danger);border-color:var(--danger)}
 .pill{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--field);border:1px solid var(--line)}
 .pill.off{color:var(--danger);border-color:var(--danger)}
+.pill.pend{color:var(--sg-disparo-texto);border-color:var(--sg-disparo);background:color-mix(in srgb,var(--sg-disparo) 10%,transparent)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pill.pend{color:var(--sg-disparo)}}:root[data-theme="dark"] .pill.pend{color:var(--sg-disparo)}
+.ucard.upend{background:color-mix(in srgb,var(--sg-disparo) 5%,transparent);border-radius:12px}
 .marcs{display:flex;flex-wrap:wrap;gap:6px}
 .marcs button{font-size:12px;padding:4px 8px}
 .marcs .mg{width:100%;font-size:11.5px;font-weight:600;color:var(--muted);margin-top:4px}
@@ -973,12 +976,19 @@ button.danger{color:var(--danger);border-color:var(--danger)}
 </form></div>
 
 <div id="fotoBox" hidden><div class="loginCard fotoCard">
-  <h2>Foto do rosto</h2>
-  <p class="hint" id="fotoMsg">Para a sua identificação no sistema, tire uma foto do seu rosto. Fique de frente, em um lugar com boa luz e sem óculos escuros ou boné.</p>
-  <div class="fotoArea"><video id="fotoVideo" playsinline muted autoplay></video><img id="fotoPrev" alt="Prévia da foto" hidden><div class="fotoOval" aria-hidden="true"></div></div>
+  <h2 id="cadTitulo">Complete seu cadastro</h2>
+  <p class="hint" id="cadIntro">Antes de entrar, confirme seus dados. É rápido e só acontece uma vez.</p>
+  <label>Nome completo<input id="cadNome" autocomplete="name" autocapitalize="words" placeholder="Nome e sobrenome" required></label>
+  <div class="cadBloco"><span class="cadRot">Estado de atuação <small id="cadUfN">marque um ou mais</small></span><div class="uufs cadUfs" id="cadUfs"></div></div>
+  <div class="cadBloco"><span class="cadRot">Foto do rosto (selfie)</span>
+    <p class="hint cadDica">Fique de frente, em um lugar com boa luz, sem óculos escuros ou boné.</p>
+    <div class="fotoArea"><video id="fotoVideo" playsinline muted autoplay></video><img id="fotoPrev" alt="Prévia da foto" hidden><div class="fotoOval" aria-hidden="true"></div></div>
+    <div class="tools cadFotoBtns"><button type="button" id="btnFotoTirar">Tirar foto</button><button type="button" id="btnFotoRefazer" hidden>Tirar outra</button></div>
+    <label class="linkbtn fotoArq">Sem câmera? Enviar uma foto<input type="file" id="fotoArq" accept="image/*" capture="user" hidden></label>
+  </div>
   <label class="fotoOk"><input type="checkbox" id="fotoAceite"> Autorizo o uso desta foto para a minha identificação no Shotgun.</label>
-  <div class="tools"><button type="button" class="primary" id="btnFotoTirar">Tirar foto</button><button type="button" id="btnFotoRefazer" hidden>Tirar outra</button><button type="button" class="primary" id="btnFotoSalvar" hidden>Salvar e entrar</button></div>
-  <label class="linkbtn fotoArq">Sem câmera? Enviar uma foto<input type="file" id="fotoArq" accept="image/*" capture="user" hidden></label>
+  <p class="cadMsg" id="fotoMsg" role="status"></p>
+  <button type="button" class="primary" id="btnFotoSalvar">Salvar e entrar</button>
   <button type="button" class="linkbtn" id="btnFotoSair">Sair</button>
 </div></div>
 

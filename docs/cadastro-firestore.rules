@@ -1,0 +1,27 @@
+// Regras do cadastro no primeiro acesso (nome completo, estado de atuação e foto do rosto).
+// Cole estes blocos DENTRO do "match /databases/{database}/documents { ... }" das regras atuais do Firestore
+// (console do Firebase > Firestore Database > Regras) e clique em Publicar. Não apague as regras que já existem:
+// estes blocos só ACRESCENTAM permissões (no Firestore, basta uma regra permitir).
+
+    function cadSou(uid) { return request.auth != null && request.auth.uid == uid; }
+    function cadSo(campos) { return request.resource.data.diff(resource.data).affectedKeys().hasOnly(campos); }
+
+    match /usuarios/{uid} {
+      // a pessoa lê o próprio cadastro (para saber se já foi liberada)
+      allow read: if cadSou(uid);
+      // quem entra sem cadastro pode criar o seu, sempre como vendedor, bloqueado e aguardando liberação
+      allow create: if cadSou(uid)
+        && request.resource.data.keys().hasOnly(['nome', 'email', 'fone', 'papel', 'papeis', 'estados', 'ativo', 'pendente', 'criado', 'cadastroEm'])
+        && request.resource.data.ativo == false && request.resource.data.pendente == true
+        && request.resource.data.papel == 'vendedor' && request.resource.data.papeis == ['vendedor']
+        && request.resource.data.email == request.auth.token.email.lower()
+        && request.resource.data.estados is list && request.resource.data.nome is string;
+      // a própria pessoa completa nome e estados de atuação (nada de perfil, liberação ou setor)
+      allow update: if cadSou(uid) && cadSo(['nome', 'estados', 'cadastroEm'])
+        && request.resource.data.estados is list && request.resource.data.nome is string;
+    }
+
+    match /fotos/{uid} {
+      // cada pessoa lê e grava só a própria foto (inclusive quem ainda aguarda liberação)
+      allow read, write: if cadSou(uid);
+    }
