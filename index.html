@@ -1,0 +1,16 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shotgun mudou de endereço</title>
+<script>
+// O app foi para https://dcmadruga.github.io/CRM-Shotgun/ . Mantém o resto do caminho, a busca (?id=...) e o # dos links antigos.
+(function(){
+  var novo='https://dcmadruga.github.io/CRM-Shotgun/';
+  var resto=location.pathname.replace(/^\/propostas-argo\/?/,'');
+  // desliga o service worker antigo deste endereço, para o app instalado não ficar preso na cópia velha
+  try{ navigator.serviceWorker && navigator.serviceWorker.getRegistrations().then(function(rs){ rs.forEach(function(r){ if(r.scope.indexOf('/propostas-argo/')>-1) r.unregister() }) }) }catch(e){}
+  location.replace(novo+resto+location.search+location.hash);
+})();
+</script>
+</head><body style="font-family:system-ui,sans-serif;padding:24px">
+<p>O Shotgun mudou de endereço. Se não abrir sozinho, acesse <a href="https://dcmadruga.github.io/CRM-Shotgun/">dcmadruga.github.io/CRM-Shotgun</a>.</p>
+</body></html>
